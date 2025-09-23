@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  user_id     Int        @id @default(autoincrement())
+  email       String     @unique
+  password    String
+  first_name  String
+  last_name   String
+  role        Role
+  profile_url String?
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+
+  // Relations
+  tasks            tasks[]    @relation("UserTasks")
+  createdProjects  projects[] @relation("UserProjects")
+  createdTasks     tasks[]    @relation("UserCreatedTasks")
+}
+
+model projects {
+  project_id  Int      @id @default(autoincrement())
+  name        String
+  description String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // New field
+  created_by  Int
+  creator     users    @relation("UserProjects", fields: [created_by], references: [user_id])
+
+  tasks       tasks[]
+}
+
+model tasks {
+  task_id      Int       @id @default(autoincrement())
+  project_id   Int
+  title        String    
+  description  String
+  assigned_to  Int
+  created_by   Int
+  is_completed Boolean   @default(false)
+  deadline_at  DateTime?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  project      projects  @relation(fields: [project_id], references: [project_id])
+  user         users     @relation("UserTasks", fields: [assigned_to], references: [user_id])
+  creator      users     @relation("UserCreatedTasks", fields: [created_by], references: [user_id])
+  logs         logs[]
+}
+
+model logs {
+  log_id      Int      @id @default(autoincrement())
+  task_id     Int
+  description String
+  created_at  DateTime @default(now())
+
+  task        tasks    @relation(fields: [task_id], references: [task_id])
+}
+
+enum Role {
+  UIUX_DESIGNER
+  FRONTEND_DEVELOPER
+  BACKEND_DEVELOPER
+  FULLSTACK_DEVELOPER
+  PROJECT_MANAGER
+  ADMIN
+}
