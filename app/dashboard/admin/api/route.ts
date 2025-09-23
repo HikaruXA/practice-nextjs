@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { users } from "@prisma/client";
 import prisma from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
 // TODO: Add authentication and authorization to restrict access to admin users only
 export async function POST(req: Request) {
@@ -21,10 +22,12 @@ export async function POST(req: Request) {
       );
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = await prisma.users.create({
       data: {
         email,
-        password,
+        password: hashedPassword,
         first_name,
         last_name,
         role,
