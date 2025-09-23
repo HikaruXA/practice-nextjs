@@ -21,6 +21,8 @@ model users {
   last_name   String
   role        Role
   profile_url String?
+  is_deleted  Boolean    @default(false)
+  deleted_at  DateTime?  // Optional, to track when deleted
   created_at  DateTime   @default(now())
   updated_at  DateTime   @updatedAt
 

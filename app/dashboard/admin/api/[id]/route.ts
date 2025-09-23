@@ -12,9 +12,11 @@ export async function DELETE(req: Request) {
       );
     }
 
-    await prisma.users.delete({
+    await prisma.users.update({
       where: { user_id },
+      data: { is_deleted: true, deleted_at: new Date() },
     });
+
     return NextResponse.json(
       { message: "User deleted successfully" },
       { status: 200 }
