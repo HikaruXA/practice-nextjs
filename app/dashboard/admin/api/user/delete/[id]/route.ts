@@ -11,16 +11,15 @@ export async function PATCH(req: Request) {
         { status: 400 }
       );
     }
-
     const deletedUser = await prisma.users.update({
       where: { user_id },
       data: { deleted_at: new Date(), is_deleted: true },
     });
     return NextResponse.json(deletedUser, { status: 200 });
   } catch (error) {
-    console.error("Error restoring user:", error);
+    console.error("Error deleting user:", error);
     return NextResponse.json(
-      { error: "Failed to restore user" },
+      { error: "Failed to delete user" },
       { status: 500 }
     );
   }
