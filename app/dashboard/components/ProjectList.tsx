@@ -52,8 +52,6 @@ const ProjectList = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-900">Projects</h1>
-
       {projects?.length === 0 ? (
         <div className="text-center text-gray-500">No projects found.</div>
       ) : (
