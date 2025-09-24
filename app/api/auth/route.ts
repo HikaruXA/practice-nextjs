@@ -18,7 +18,13 @@ export async function POST(req: Request) {
         { error: "Invalid email or password" },
         { status: 401 }
       );
+    } else if (user.is_deleted === true) {
+      return NextResponse.json(
+        { error: "This account has been deleted" },
+        { status: 403 }
+      );
     }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return NextResponse.json(
