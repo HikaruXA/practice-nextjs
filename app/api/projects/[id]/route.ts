@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { projects } from "@prisma/client";
 
-export async function PUT(req: Request) {
+export async function PATCH(req: Request) {
   try {
     const project_id = parseInt(req.url.slice(req.url.lastIndexOf("/") + 1));
 
