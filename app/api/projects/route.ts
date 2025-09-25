@@ -2,11 +2,51 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { projects } from "@prisma/client";
 
-// TODO: Add authentication and authorization to restrict access to authenticated users only
+// TODO: PAGINATION WITH LIMIT AND OFFSET
 export async function GET() {
   try {
-    const projects = await prisma.projects.findMany();
-    return NextResponse.json(projects, { status: 200 });
+    // Get all projects with task counts grouped by status
+    const projectsWithTaskCounts = await prisma.projects.findMany({
+      include: {
+        tasks: {
+          select: {
+            status: true,
+          },
+        },
+      },
+    });
+
+    // Map through projects and count tasks by status
+    const result = projectsWithTaskCounts.map((project) => {
+      // Count tasks by status
+      const counts = {
+        notStarted: 0,
+        inProgress: 0,
+        completed: 0,
+      };
+
+      project.tasks.forEach((task) => {
+        switch (task.status) {
+          case "PENDING":
+            counts.notStarted++;
+            break;
+          case "ACTIVE":
+            counts.inProgress++;
+            break;
+          case "COMPLETED":
+            counts.completed++;
+            break;
+        }
+      });
+
+      return {
+        ...project,
+        taskCounts: counts,
+        tasks: undefined, // remove tasks array to keep response clean
+      };
+    });
+
+    return NextResponse.json(result, { status: 200 });
   } catch (error) {
     console.error("Error fetching projects:", error);
     return NextResponse.json(

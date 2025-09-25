@@ -47,20 +47,21 @@ model projects {
 }
 
 model tasks {
-  task_id      Int       @id @default(autoincrement())
+  task_id      Int        @id @default(autoincrement())
   project_id   Int
   title        String    
   description  String
   assigned_to  Int
   created_by   Int
-  is_completed Boolean   @default(false)
+  status       Status     @default(PENDING)
+  difficulty   Difficulty 
   deadline_at  DateTime?
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
 
-  project      projects  @relation(fields: [project_id], references: [project_id])
-  user         users     @relation("UserTasks", fields: [assigned_to], references: [user_id])
-  creator      users     @relation("UserCreatedTasks", fields: [created_by], references: [user_id])
+  project      projects   @relation(fields: [project_id], references: [project_id])
+  user         users      @relation("UserTasks", fields: [assigned_to], references: [user_id])
+  creator      users      @relation("UserCreatedTasks", fields: [created_by], references: [user_id])
   logs         logs[]
 }
 
@@ -80,4 +81,16 @@ enum Role {
   FULLSTACK_DEVELOPER
   PROJECT_MANAGER
   ADMIN
+}
+
+enum Status {
+  PENDING
+  ACTIVE
+  COMPLETED
+}
+
+enum Difficulty {
+  LOW
+  MEDIUM
+  HIGH
 }

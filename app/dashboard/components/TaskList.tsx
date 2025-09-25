@@ -11,7 +11,21 @@ interface Task {
   task_id: number;
   title: string;
   description?: string;
+  status: "PENDING" | "ACTIVE" | "COMPLETED";
+  difficulty: "LOW" | "MEDIUM" | "HIGH";
 }
+
+const statusColors: Record<Task["status"], string> = {
+  PENDING: "bg-yellow-200 text-yellow-800",
+  ACTIVE: "bg-blue-200 text-blue-800",
+  COMPLETED: "bg-green-200 text-green-800",
+};
+
+const difficultyColors: Record<Task["difficulty"], string> = {
+  LOW: "bg-green-100 text-green-800",
+  MEDIUM: "bg-yellow-100 text-yellow-800",
+  HIGH: "bg-red-100 text-red-800",
+};
 
 const TaskList = () => {
   const {
@@ -57,6 +71,25 @@ const TaskList = () => {
       ) : (
         <div className="overflow-x-auto rounded-lg shadow-lg border border-gray-200">
           <table className="min-w-full divide-y divide-gray-200 bg-white">
+            <thead>
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Title
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Description
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Difficulty
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
             <tbody className="divide-y divide-gray-100">
               {tasks?.map((task) => (
                 <tr
@@ -68,6 +101,24 @@ const TaskList = () => {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700 truncate max-w-xs whitespace-nowrap overflow-hidden">
                     {task.description || "—"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <span
+                      className={`inline-flex px-2 py-1 rounded-full text-xs font-semibold ${
+                        statusColors[task.status]
+                      }`}
+                    >
+                      {task.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <span
+                      className={`inline-flex px-2 py-1 rounded-full text-xs font-semibold ${
+                        difficultyColors[task.difficulty]
+                      }`}
+                    >
+                      {task.difficulty}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
                     <div className="flex gap-2 justify-end">
